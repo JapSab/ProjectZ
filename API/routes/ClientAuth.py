@@ -1,13 +1,12 @@
 from API import app
 from flask import Flask, request, jsonify
-from API.classes.Auth import ClientRegistration , ClientLogin, users_collection, secret_key
-import jwt
+from API.classes.Auth import ClientRegistration , ClientLogin, users_collection
 import datetime
 
 
 registration_handler = ClientRegistration(users_collection)
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register_user():
     try:
         user_data = request.json
@@ -17,7 +16,7 @@ def register_user():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login_user():
     try:
         user_data = request.json
@@ -32,3 +31,4 @@ def login_user():
         return jsonify(result), status
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+

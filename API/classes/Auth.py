@@ -1,5 +1,6 @@
-from API import  users_collection, secret_key
+from API import  users_collection, jwt_secret_key
 import bcrypt, datetime
+from flask_jwt_extended import create_access_token
 import jwt
 
 class ClientRegistration:
@@ -35,9 +36,9 @@ class ClientRegistration:
     
 
 class ClientLogin:
-    def __init__(self, users_collection, secret_key):
+    def __init__(self, users_collection):
         self.users_collection = users_collection
-        self.secret_key = secret_key
+        self.secret_key = jwt_secret_key
 
     def verify_password(self, stored_password, provided_password):
         """Verify a stored hashed password against one provided by user"""
@@ -52,14 +53,15 @@ class ClientLogin:
         # Verify the password
         if not self.verify_password(user['password'], password):
             return {"error": "Invalid password"}, 401
-        if self.verify_password(user['password'], password):
-            payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
-                'iat': datetime.datetime.utcnow(),
-                'sub': user['email'],
-                'name': user.get('name', '')
-            }
-            token = jwt.encode(payload, self.secret_key, algorithm='HS256')
-            return {"message": "Login successful", "token": token}, 200
-        else:
-            return {"error": "Invalid password"}, 401
+        # if self.verify_password(user['password'], password):
+        #     payload = {
+        #         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
+        #         'iat': datetime.datetime.utcnow(),
+        #         'sub': user['email'],
+        #         'name': user.get('name', '')
+        #     }
+        #     token = jwt.encode(payload, self.secret_key, algorithm='HS256')
+        #     return {"message": "Login successful", "token": token}, 200
+        
+        access_token = create_access_token(identity={'email': user['email'], 'name': user.get('name', '')})
+        return {"message": "Login successful", "token": access_token}, 200
