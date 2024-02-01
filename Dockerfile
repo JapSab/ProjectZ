@@ -15,3 +15,7 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . /usr/src/app/
+
+expose 8000
+
+CMD ["gunicorn","--config", "gunicorn_config.py", "app:app"]
