@@ -1,7 +1,7 @@
-from API import  users_collection, jwt_secret_key
+from API import  users_collection, admin_collection,jwt_secret_key
 import bcrypt, datetime
-from flask_jwt_extended import create_access_token
 import jwt
+from API.jwt_token.tokenizer import generate_jwt_token 
 
 class ClientRegistration:
     def __init__(self, users_collection):
@@ -13,7 +13,7 @@ class ClientRegistration:
         return hashed
 
     def register(self, user_data):
-        name = user_data.get("name")
+        name = user_data.get("username")
         email = user_data.get("email")
         password = user_data.get("password")
         phone = user_data.get("phone")
@@ -29,6 +29,14 @@ class ClientRegistration:
         # hashing the password
         hashed_password = self.hash_password(password)
         user_data['password'] = hashed_password
+
+        user_data = {
+            "username": name,
+            "email": email,
+            "password": hashed_password,
+            "phone": phone,
+            "role": "user"  
+        }
 
         # Inserting user data into MongoDB
         self.users_collection.insert_one(user_data)
@@ -47,6 +55,7 @@ class ClientLogin:
     def login(self, email, password):
         # Find user by email
         user = self.users_collection.find_one({"email": email})
+        
         if not user:
             return {"error": "No user found with that email"}, 404
 
@@ -62,6 +71,31 @@ class ClientLogin:
         #     }
         #     token = jwt.encode(payload, self.secret_key, algorithm='HS256')
         #     return {"message": "Login successful", "token": token}, 200
-        
-        access_token = create_access_token(identity={'email': user['email'], 'name': user.get('name', '')})
+        identity = {'email': user['email'], 'name': user.get('username', '')}
+        access_token = generate_jwt_token(identity, role=user.get('role'))
         return {"message": "Login successful", "token": access_token}, 200
+    
+
+class AdminLogin:
+    def __init__(self, admin_collection):
+        self.admin_collection = admin_collection
+        self.secret_key = jwt_secret_key
+
+    def verify_password(self, stored_password, provided_password):
+        return bcrypt.checkpw(provided_password.encode('utf-8'), stored_password)
+
+    def login(self, name, password):
+        # Find user by email
+        admin = self.admin_collection.find_one({"username": name})
+        if not admin:
+            return {"error": "Wrong username."}, 401
+
+        
+        # Verify the password
+        if not self.verify_password(admin['password'], password):
+            return {"error": "Invalid password"}, 401
+        
+        identity = {'name': admin.get('username', '')}
+        access_token = generate_jwt_token(identity, role=admin.get('role'))
+        return {"message": "Login successful", "token": access_token}, 200
+    

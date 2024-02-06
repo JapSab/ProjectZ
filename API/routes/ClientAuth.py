@@ -6,7 +6,7 @@ import datetime
 
 registration_handler = ClientRegistration(users_collection)
 
-@app.route('/api/register', methods=['POST'])
+@app.route('/api/client/register', methods=['POST'])
 def register_user():
     try:
         user_data = request.json
@@ -16,7 +16,7 @@ def register_user():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/api/client/login', methods=['POST'])
 def login_user():
     try:
         user_data = request.json

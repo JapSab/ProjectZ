@@ -17,5 +17,8 @@ app.config['JWT_SECRET_KEY'] = jwt_secret_key
 client = MongoClient(mongo_uri)
 db = client[db_name]
 users_collection = db['Clients']
+admin_collection = db['Admin']
 jwt = JWTManager(app)
+
 from API.routes import ClientAuth
+from API.routes import AdminRoutes

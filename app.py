@@ -1,14 +1,15 @@
 from API import app
-from flask_jwt_extended import jwt_required, get_jwt_identity
-
+from API.jwt_token.tokenizer import admin_required
 
 @app.route('/dashboard')
-@jwt_required()
+@admin_required
 def hello():
-    identity = get_jwt_identity()
-    user_name = identity.get('name', 'guest')
-    return 'Hello, ' + user_name
+    
+    return 'Hello'
 
+@app.route('/')
+def homepage():
+    return 'it works'
 
 if __name__ == '__main__':
     app.run(debug=True)
