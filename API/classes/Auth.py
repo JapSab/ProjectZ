@@ -13,14 +13,15 @@ class ClientRegistration:
         return hashed
 
     def register(self, user_data):
-        name = user_data.get("username")
+        name = user_data.get("name")
+        lastname = user_data.get("lastname")
         email = user_data.get("email")
         password = user_data.get("password")
         phone = user_data.get("phone")
 
         # validation
-        if not name or not email or not phone or not password:
-            return {"error": "Missing name, email, or phone"}, 400
+        if not name or not lastname or not email or not phone or not password:
+            return {"error": "Missing name, lastname, email, or phone"}, 400
 
         # Check if user already exists
         if self.users_collection.find_one({"email": email}):
@@ -31,7 +32,8 @@ class ClientRegistration:
         user_data['password'] = hashed_password
 
         user_data = {
-            "username": name,
+            "name": name,
+            "lastname": lastname,
             "email": email,
             "password": hashed_password,
             "phone": phone,

@@ -21,3 +21,12 @@ def admin_login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+# later if necessary
+@app.route('/api/admin/panel', methods=['GET'])
+@admin_required
+def get_admin_panel():
+    pass
+
+
+
