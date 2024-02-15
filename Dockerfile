@@ -18,4 +18,5 @@ COPY . /usr/src/app/
 
 EXPOSE 8000
 
+# run gunicorn
 CMD ["gunicorn","--config", "gunicorn_config.py", "app:app"]
