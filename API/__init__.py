@@ -1,10 +1,10 @@
+import os
+
 from flask import Flask, jsonify
 from pymongo import MongoClient
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-# from .connections import redis_cache
-
-import os
+from .connections import RedisCache, redis_cache
 
 app = Flask(__name__)
 CORS(app)
@@ -23,15 +23,17 @@ blogs_collection = db['Blogs']
 jwt = JWTManager(app)
 
 
-# def startup_event():
-#     redis_cache.init_cache()
-
-# def teardown_event(exception=None):
-#     redis_cache.close()
+def teardown_event(exception=None):
+    if redis_cache.redis_cache is not None:
+        redis_cache.redis_cache.close()
 
 
 @app.route("/healthz")
-def root():
+async def root():
+    if redis_cache.redis_cache is None:
+        raise RuntimeError("Redis cache is not initialized")
+
+    await redis_cache.set("healthz", "PONG")
     return jsonify({"message": "PONG"})
 
 

@@ -1,18 +1,19 @@
-from typing import Optional
+import os
 from redis import Redis
-from API import redis_url
+
 
 class RedisCache:
-    def __init__(self):
-        self.redis_cache = None
-
-    def init_cache(self, redis_url):
+    def __init__(self, redis_url):
         self.redis_cache = Redis.from_url(redis_url, decode_responses=True)
 
     async def set(self, key, value):
+        if self.redis_cache is None:
+            raise RuntimeError("Redis cache is not initialized")
         return await self.redis_cache.set(key, value)
 
     async def get(self, key):
+        if self.redis_cache is None:
+            raise RuntimeError("Redis cache is not initialized")
         return await self.redis_cache.get(key)
 
     async def set_expire(self, key, value, time=900):
@@ -25,4 +26,4 @@ class RedisCache:
         await self.redis_cache.close()
 
 
-redis_cache = RedisCache()
+redis_cache = RedisCache(os.environ.get("REDIS_CACHE_URL"))
