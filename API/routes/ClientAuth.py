@@ -1,8 +1,9 @@
 from API import app
 from flask import Flask, request, jsonify
 from API.classes.Auth import ClientRegistration , ClientLogin, users_collection
+from .. import redis_cache
 import datetime
-
+import json
 
 registration_handler = ClientRegistration(users_collection)
 
@@ -28,7 +29,23 @@ def login_user():
 
         login_handler = ClientLogin(users_collection)
         result, status = login_handler.login(email, password)
+        redis_cache.set(email, json.dumps({'token:': result.get("token")}), ex=datetime.timedelta(days=1))
         return jsonify(result), status
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/api/client/logout', methods=['POST'])
+def logout_user():
+    try:
+        user_data = request.json
+        email = user_data.get("email")
+
+        if not email:
+            return jsonify({"error": "Missing email"}), 400
+
+        redis_cache.delete(email)
+
+        return jsonify({"message": "User logged out successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

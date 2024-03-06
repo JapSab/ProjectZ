@@ -3,7 +3,7 @@ version: "3.8"
 services:
   web:
     build: ./
-    command: gunicorn --config gunicorn_config.py app:app
+    command: gunicorn --config gunicorn_config.py --reload app:app
     volumes:
       - .:/usr/src/app
     ports:

@@ -26,4 +26,4 @@ class RedisCache:
         await self.redis_cache.close()
 
 
-redis_cache = RedisCache(os.environ.get("REDIS_CACHE_URL"))
+redis_cache = RedisCache()
