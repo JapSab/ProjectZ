@@ -6,8 +6,9 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import redis
 # from .connections import RedisCache, redis_cache
-
 # from .consumers import sio_app
+
+
 redis_cache = redis.Redis(host='redis-service', port=6379, decode_responses=True)
 
 app = Flask(__name__)
@@ -36,10 +37,8 @@ def teardown_event(exception=None):
 @app.route("/healthz")
 async def root():
 
-    redis_cache.set('foo', 'bar')
-    return {'foo': 'bar'}
     # await sio_app.emit("health_check", {"status": "PONG"})
-    # return jsonify({"message": "PONG"})
+    return jsonify({"message": "PONG"})
 
 
 from API.routes import ClientAuth

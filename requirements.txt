@@ -19,3 +19,4 @@ flasgger==0.9.7.1
 python-socketio==5.5.0
 websockets==10.1
 redis==4.0.2
+aioredis==2.0.0
