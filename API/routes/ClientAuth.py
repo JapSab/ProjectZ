@@ -1,13 +1,14 @@
 from API import app
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from API.classes.Auth import ClientRegistration , ClientLogin, users_collection
-from .. import redis_cache
+from API import redis_cache
 import datetime
 import json
 
+
 registration_handler = ClientRegistration(users_collection)
 
-@app.route('/api/client/register', methods=['POST'])
+@app.route.route('/api/client/register', methods=['POST'])
 def register_user():
     try:
         user_data = request.json
@@ -17,7 +18,7 @@ def register_user():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/client/login', methods=['POST'])
+@app.route.route('/api/client/login', methods=['POST'])
 def login_user():
     try:
         user_data = request.json
@@ -35,7 +36,7 @@ def login_user():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/client/logout', methods=['POST'])
+@app.route.route('/api/client/logout', methods=['POST'])
 def logout_user():
     try:
         user_data = request.json

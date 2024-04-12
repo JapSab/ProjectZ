@@ -1,6 +1,5 @@
 from API import  users_collection, admin_collection,jwt_secret_key
-import bcrypt, datetime
-import jwt
+import bcrypt
 from API.jwt_token.tokenizer import generate_jwt_token 
 
 class ClientRegistration:

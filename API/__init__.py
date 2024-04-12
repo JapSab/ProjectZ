@@ -5,9 +5,6 @@ from pymongo import MongoClient
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import redis
-# from .connections import RedisCache, redis_cache
-# from .consumers import sio_app
-
 
 redis_cache = redis.Redis(host='redis-service', port=6379, decode_responses=True)
 
@@ -27,7 +24,6 @@ admin_collection = db['Admin']
 blogs_collection = db['Blogs']
 jwt = JWTManager(app)
 
-# conn = redis.from_url(redis_url)
 
 def teardown_event(exception=None):
     if redis_cache.redis_cache is not None:
@@ -37,10 +33,4 @@ def teardown_event(exception=None):
 @app.route("/healthz")
 async def root():
 
-    # await sio_app.emit("health_check", {"status": "PONG"})
     return jsonify({"message": "PONG"})
-
-
-from API.routes import ClientAuth
-from API.routes import AdminRoutes
-from API.routes import BlogRoutes
