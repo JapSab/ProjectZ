@@ -1,7 +1,7 @@
 from API import app, blogs_collection
 from flask import request, jsonify
 from API.classes.Blog import Blogger
-from API.jwt_token.tokenizer import admin_required
+from API.utils.tokenizer import admin_required
 
 
 blogger = Blogger(blogs_collection)

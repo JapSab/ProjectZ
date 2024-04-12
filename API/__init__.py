@@ -34,3 +34,8 @@ def teardown_event(exception=None):
 async def root():
 
     return jsonify({"message": "PONG"})
+
+
+from API.routes import ClientAuth
+from API.routes import AdminRoutes
+from API.routes import BlogRoutes

@@ -1,5 +1,5 @@
 from API import app
-from API.jwt_token.tokenizer import admin_required
+from API.utils.tokenizer import admin_required
 
 @app.route('/dashboard')
 @admin_required

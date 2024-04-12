@@ -1,6 +1,6 @@
 from API import  users_collection, admin_collection,jwt_secret_key
 import bcrypt
-from API.jwt_token.tokenizer import generate_jwt_token 
+from API.utils.tokenizer import generate_jwt_token
 
 class ClientRegistration:
     def __init__(self, users_collection):

@@ -1,7 +1,7 @@
 from API import app
 from flask import request, jsonify
 from API.classes.Auth import AdminLogin, admin_collection
-from API.jwt_token.tokenizer import admin_required
+from API.utils.tokenizer import admin_required
 
 # attorney_handler = AdminLogin(admin_collection)
 
