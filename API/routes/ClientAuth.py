@@ -14,6 +14,7 @@ def register_user():
         result, status = registration_handler.register(user_data)
         return jsonify(result), status
     except Exception as e:
+        app.logger.error(f"Failed to register user: {str(e)}")  # Log the error in more detail
         return jsonify({"error": str(e)}), 500
 
 
@@ -29,7 +30,8 @@ def login_user():
 
         login_handler = ClientLogin(users_collection)
         result, status = login_handler.login(email, password)
-        redis_cache.set(email, json.dumps({'token:': result.get("token")}), ex=datetime.timedelta(days=1))
+        # redis_cache.set(email, json.dumps({'token:': result.get("token")}), ex=datetime.timedelta(days=1))
+        print(result)
         return jsonify(result), status
     except Exception as e:
         return jsonify({"error": str(e)}), 500
