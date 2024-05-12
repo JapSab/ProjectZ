@@ -30,8 +30,8 @@ def call_livechat():
     if not action:
         return jsonify({"error": "Missing action parameter"}), 400
 
-    if action == "get_chat" and (not data.get("chat_id") or not data.get("thread_id")):
-        return jsonify({"error": "Missing chat_id or thread_id for get_chat action"}), 400
+    if action == "get_chat" and not data.get("chat_id"):
+        return jsonify({"error": "Missing chat_id for get_chat action"}), 400
 
     try:
         headers = {

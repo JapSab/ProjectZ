@@ -7,7 +7,8 @@ ENDPOINTS = {
     "get_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/get_chat?organization_id={ORGANIZATION_ID}',
     "resume_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/resume_chat?organization_id={ORGANIZATION_ID}',
     "deactive_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/deactivate_chat?organization_id={ORGANIZATION_ID}',
-    "update_customer": f"https://api.livechatinc.com/{API_VERSION}/customer/action/update_customer?organization_id={ORGANIZATION_ID}"
+    "update_customer": f"https://api.livechatinc.com/{API_VERSION}/customer/action/update_customer?organization_id={ORGANIZATION_ID}",
+    "send_event": f"https://api.livechatinc.com/{API_VERSION}/customer/action/send_event?organization_id={ORGANIZATION_ID}"
 }
 
 
@@ -20,12 +21,10 @@ def call_livechat_api(action, params=None, headers=None):
         payload = {}
     elif action == "get_chat":
         chat_id = params.get("chat_id")
-        thread_id = params.get("thread_id")
-        if not chat_id or not thread_id:
-            raise ValueError("Missing chat_id or thread_id for get_chat action")
+        if not chat_id:
+            raise ValueError(f"{chat_id} Missing chat_id for get_chat action")
         payload = {
             "chat_id": chat_id,
-            "thread_id": thread_id
         }
     elif action == "start_chat":
         payload = {}
@@ -38,14 +37,28 @@ def call_livechat_api(action, params=None, headers=None):
             "name": name,
             "email": email
         }
-    
+    elif action == "send_event":
+        chat_id = params.get("chat_id")
+        event = params.get("event")
+        if not chat_id or not event:
+            raise ValueError("Missing parameters for send_event action")
+        payload = {
+            "chat_id": chat_id,
+            "event": event
+        }
     else:
         raise Exception(f"Unsupported action: {action}")
-
+    
     try:
         response = requests.post(endpoint, headers=headers, json=payload)
+        
         response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        raise Exception(f"Error calling LiveChat API: {str(e)}")
-
-    return response.json()
+        return response.json()
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        if response is not None:
+            print(f"Response Content: {response.content}")
+        raise
+    except Exception as err:
+        print(f"An error occurred: {err}")
+        raise
