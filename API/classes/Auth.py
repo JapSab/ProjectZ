@@ -74,9 +74,9 @@ class ClientLogin:
         #     }
         #     token = jwt.encode(payload, self.secret_key, algorithm='HS256')
         #     return {"message": "Login successful", "token": token}, 200
-        identity = {'email': user['email'], 'name': user.get('username', '')}
-        access_token = generate_jwt_token(identity, role=user.get('role'))
-        return {"message": "Login successful", "token": access_token}, 200
+        identity = {'email': user['email']}
+        login_token = generate_jwt_token(identity, role=user.get('role'))
+        return {"message": "Login successful", "token": login_token}, 200
     
 
 class AdminLogin:
@@ -99,7 +99,7 @@ class AdminLogin:
             return {"error": "Invalid password"}, 401
         
         identity = {'name': admin.get('username', '')}
-        access_token = generate_jwt_token(identity, role=admin.get('role'))
-        print(access_token)
-        return {"message": "Login successful", "token": access_token}, 200
+        login_token = generate_jwt_token(identity, role=admin.get('role'))
+        print(login_token)
+        return {"message": "Login successful", "token": login_token}, 200
     
