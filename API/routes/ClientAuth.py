@@ -4,7 +4,6 @@ from API.classes.Auth import ClientRegistration , ClientLogin, users_collection
 import datetime
 import json
 
-
 registration_handler = ClientRegistration(users_collection)
 
 @app.route('/api/client/register', methods=['POST'])
@@ -30,7 +29,6 @@ def login_user():
 
         login_handler = ClientLogin(users_collection)
         result, status = login_handler.login(email, password)
-        # redis_cache.set(email, json.dumps({'token:': result.get("token")}), ex=datetime.timedelta(days=1))
         print(result)
         return jsonify(result), status
     except Exception as e:
@@ -46,7 +44,7 @@ def logout_user():
         if not email:
             return jsonify({"error": "Missing email"}), 400
 
-        redis_cache.delete(email)
+        redis_cache.delete(f"login_token:{email}")
 
         return jsonify({"message": "User logged out successfully"}), 200
     except Exception as e:

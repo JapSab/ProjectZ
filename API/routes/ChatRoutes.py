@@ -1,4 +1,4 @@
-from API import app
+from API import app, redis_cache
 from flask import  jsonify, request
 import requests
 
@@ -6,6 +6,10 @@ from API.utils.livechat import call_livechat_api
 
 @app.route('/get_customer_token', methods=['GET'])
 def get_token():
+
+    email = request.args.get('email')
+    entity_id = request.args.get('entity_id')
+
     url = 'https://accounts.livechat.com/v2/customer/token'
     headers = {'Content-Type': 'application/json'}
     data = {
@@ -15,9 +19,16 @@ def get_token():
         "response_type": "token"
     }
 
+    if entity_id:
+        data["entity_id"] = entity_id
+
     response = requests.post(url, json=data, headers=headers)
     
     if response.status_code == 200:
+        if email:
+            redis_cache.set(f"chat_token:{email}", response.json().get('access_token'), ex=14400)
+            if entity_id:
+                redis_cache.set(f"chat_entity:{email}", entity_id)
         return jsonify(response.json())
     else:
         return jsonify({"error": "Failed to retrieve token", "status_code": response.status_code})

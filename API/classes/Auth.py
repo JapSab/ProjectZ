@@ -1,6 +1,6 @@
-from API import  users_collection, admin_collection,jwt_secret_key
-import bcrypt
+from API import redis_cache, users_collection, admin_collection,jwt_secret_key
 from API.utils.tokenizer import generate_jwt_token
+import bcrypt
 
 class ClientRegistration:
     def __init__(self, users_collection):
@@ -17,7 +17,6 @@ class ClientRegistration:
         email = user_data.get("email")
         password = user_data.get("password")
         phone = user_data.get("phone")
-
         # validation
         # if not name or not lastname or not email or not phone or not password:
         if not  email or not password or not phone:
@@ -27,10 +26,12 @@ class ClientRegistration:
         # Check if user already exists
         if self.users_collection.find_one({"email": email}):
             return {"error": "User with this email already exists"}, 409
+        print("qwiue0q9wue0qiwue")
 
         # hashing the password
         hashed_password = self.hash_password(password)
         user_data['password'] = hashed_password
+        
 
         user_data = {
             # "name": name,
@@ -76,6 +77,8 @@ class ClientLogin:
         #     return {"message": "Login successful", "token": token}, 200
         identity = {'email': user['email']}
         login_token = generate_jwt_token(identity, role=user.get('role'))
+        redis_cache.set(f"login_token:{email}", login_token, ex=259200)
+
         return {"message": "Login successful", "token": login_token}, 200
     
 
