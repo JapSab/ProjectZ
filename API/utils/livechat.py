@@ -1,14 +1,14 @@
 import requests
-from API import API_VERSION, ORGANIZATION_ID
+from API import LIVECHAT_BASE_URL, LIVECHAT_API_VERSION, LIVECHAT_ORGANIZATION_ID
 
 ENDPOINTS = {
-    "list_chats" : f"https://api.livechatinc.com/{API_VERSION}/customer/action/list_chats?organization_id={ORGANIZATION_ID}",
-    "start_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/start_chat?organization_id={ORGANIZATION_ID}',
-    "get_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/get_chat?organization_id={ORGANIZATION_ID}',
-    "resume_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/resume_chat?organization_id={ORGANIZATION_ID}',
-    "deactive_chat": f'https://api.livechatinc.com/{API_VERSION}/customer/action/deactivate_chat?organization_id={ORGANIZATION_ID}',
-    "update_customer": f"https://api.livechatinc.com/{API_VERSION}/customer/action/update_customer?organization_id={ORGANIZATION_ID}",
-    "send_event": f"https://api.livechatinc.com/{API_VERSION}/customer/action/send_event?organization_id={ORGANIZATION_ID}"
+    "list_chats" : f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/list_chats?organization_id={LIVECHAT_ORGANIZATION_ID}",
+    "start_chat": f'{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/start_chat?organization_id={LIVECHAT_ORGANIZATION_ID}',
+    "get_chat": f'{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/get_chat?organization_id={LIVECHAT_ORGANIZATION_ID}',
+    "resume_chat": f'{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/resume_chat?organization_id={LIVECHAT_ORGANIZATION_ID}',
+    "deactive_chat": f'{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/deactivate_chat?organization_id={LIVECHAT_ORGANIZATION_ID}',
+    "update_customer": f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/update_customer?organization_id={LIVECHAT_ORGANIZATION_ID}",
+    "send_event": f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/send_event?organization_id={LIVECHAT_ORGANIZATION_ID}"
 }
 
 
