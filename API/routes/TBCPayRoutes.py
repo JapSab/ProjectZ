@@ -10,7 +10,6 @@ def call_tbcpay():
     action = data.get('action')
     if not action:
         return jsonify({"error": "Missing action parameter"}), 400
-
     try:
         response = call_tbcpay_api(action, params=data)
         return jsonify(response)
