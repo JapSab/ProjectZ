@@ -25,19 +25,6 @@ admin_collection = db['Admin']
 blogs_collection = db['Blogs']
 jwt = JWTManager(app)
 
-# ChatAPI Envs
-LIVECHAT_BASE_URL = "https://api.livechatinc.com"
-LIVECHAT_API_VERSION = "v3.5"
-LIVECHAT_ORGANIZATION_ID = "806b6f60-0f08-4f4d-a3cf-0d84d73d88c5"
-
-# TBCPay Envs
-TBCPAY_BASE_URL = "https://api.tbcbank.ge"
-TBCPAY_API_VERSION = "v1"
-TBCPAY_API_KEY = "SXxJe9d2ZGVc7VpZROdMRRGh7KFrx63G"
-TBCPAY_CLIENT_ID = "7001798"
-TBCPAY_CLIENT_SECRET = "tq2h0YMXvNr9eA1u"
-
-
 def teardown_event(exception=None):
     if redis_cache.redis_cache is not None:
         redis_cache.redis_cache.close()
