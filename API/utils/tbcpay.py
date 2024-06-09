@@ -1,12 +1,14 @@
 import requests
 from API import TBCPAY_BASE_URL, TBCPAY_API_KEY, TBCPAY_API_VERSION, TBCPAY_CLIENT_ID, TBCPAY_CLIENT_SECRET
 
+payment_id = "payment_id"
+
 ENDPOINTS = {
     "get_token": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/access-token",
     "create_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments",
-    "get_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments:payment_id",
+    "get_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments/:payment_id",
     "cancel_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments/:payment_id/cancel",
-    "complete_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments/:payment_id/completion",
+    "complete_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments/{payment_id}/completion",
 }
 
 def call_tbcpay_api(action, params):
@@ -38,6 +40,17 @@ def call_tbcpay_api(action, params):
             payload['returnurl'] = return_url
             print(payload)
             print(headers)
+            response = requests.post(endpoint, headers=headers, json=payload)
+        elif action == "complete_payment":
+            headers['Authorization'] = f"Bearer {token}"
+            amount = params.get("amount")
+            payment_id = params.get("payment_id")
+
+            payload['amount'] = int(amount)
+
+            if "payment_id" in endpoint:
+                endpoint = endpoint.replace('payment_id', payment_id)
+                
             response = requests.post(endpoint, headers=headers, json=payload)
         
         response.raise_for_status()

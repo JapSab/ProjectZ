@@ -1,4 +1,4 @@
-from API import app, redis_cache
+from API import app, redis_cache, LIVECHAT_ORGANIZATION_ID, LIVECHAT_CLIENT_ID
 from flask import  jsonify, request
 import requests
 
@@ -14,8 +14,8 @@ def get_token():
     headers = {'Content-Type': 'application/json'}
     data = {
         "grant_type": "cookie",
-        "client_id": "041ee1815aab416ec9f39245e548c650",
-        "organization_id": "806b6f60-0f08-4f4d-a3cf-0d84d73d88c5",
+        "client_id": LIVECHAT_CLIENT_ID,
+        "organization_id": LIVECHAT_ORGANIZATION_ID,
         "response_type": "token"
     }
 

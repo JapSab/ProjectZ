@@ -25,6 +25,17 @@ admin_collection = db['Admin']
 blogs_collection = db['Blogs']
 jwt = JWTManager(app)
 
+LIVECHAT_BASE_URL = os.environ.get("LIVECHAT_BASE_URL")
+LIVECHAT_API_VERSION = os.environ.get("LIVECHAT_API_VERSION")
+LIVECHAT_ORGANIZATION_ID = os.environ.get("LIVECHAT_ORGANIZATION_ID")
+LIVECHAT_CLIENT_ID = os.environ.get("LIVECHAT_CLIENT_ID")
+
+TBCPAY_BASE_URL = os.environ.get("TBCPAY_BASE_URL")
+TBCPAY_API_VERSION = os.environ.get("TBCPAY_API_VERSION")
+TBCPAY_API_KEY = os.environ.get("TBCPAY_API_KEY")
+TBCPAY_CLIENT_ID = os.environ.get("TBCPAY_CLIENT_ID")
+TBCPAY_CLIENT_SECRET = os.environ.get("TBCPAY_CLIENT_SECRET")
+
 def teardown_event(exception=None):
     if redis_cache.redis_cache is not None:
         redis_cache.redis_cache.close()

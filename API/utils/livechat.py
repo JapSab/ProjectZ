@@ -1,5 +1,5 @@
 import requests
-from API import LIVECHAT_BASE_URL, LIVECHAT_API_VERSION, LIVECHAT_ORGANIZATION_ID
+from API import LIVECHAT_BASE_URL, LIVECHAT_API_VERSION, LIVECHAT_ORGANIZATION_ID, LIVECHAT_CLIENT_ID
 
 ENDPOINTS = {
     "list_chats" : f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/list_chats?organization_id={LIVECHAT_ORGANIZATION_ID}",
@@ -10,7 +10,6 @@ ENDPOINTS = {
     "update_customer": f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/update_customer?organization_id={LIVECHAT_ORGANIZATION_ID}",
     "send_event": f"{LIVECHAT_BASE_URL}/{LIVECHAT_API_VERSION}/customer/action/send_event?organization_id={LIVECHAT_ORGANIZATION_ID}"
 }
-
 
 def call_livechat_api(action, params=None, headers=None):
     endpoint = ENDPOINTS.get(action)
