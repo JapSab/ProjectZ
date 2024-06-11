@@ -1,5 +1,5 @@
 import requests
-from API import TBCPAY_BASE_URL, TBCPAY_API_KEY, TBCPAY_API_VERSION, TBCPAY_CLIENT_ID, TBCPAY_CLIENT_SECRET
+from API import TBCPAY_BASE_URL, TBCPAY_API_KEY, TBCPAY_API_VERSION, TBCPAY_CLIENT_ID, TBCPAY_CLIENT_SECRET, redis_cache
 
 payment_id = "payment_id"
 
@@ -34,13 +34,18 @@ def call_tbcpay_api(action, params):
         elif action == "create_payment":
             amount = params.get("amount")
             return_url = params.get("returnurl")
+            email = params.get("email")
 
             headers['Authorization'] = f"Bearer {token}"
             payload['amount'] = amount
             payload['returnurl'] = return_url
-            print(payload)
-            print(headers)
+
             response = requests.post(endpoint, headers=headers, json=payload)
+            print(response)
+            if response.status_code == 200:
+                if email:
+                    redis_cache.set(f"chat_expiration:{email}", amount['total'], ex=1800)
+
         elif action == "complete_payment":
             headers['Authorization'] = f"Bearer {token}"
             amount = params.get("amount")
