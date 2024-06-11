@@ -37,6 +37,7 @@ def call_livechat_api(action, params=None, headers=None):
             "email": email
         }
     elif action == "send_event":
+        email = params.get("email")
         has_payed = redis_cache.get(f"chat_expiration:{email}")
         if has_payed:
             chat_id = params.get("chat_id")
