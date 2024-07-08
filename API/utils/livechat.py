@@ -37,14 +37,19 @@ def call_livechat_api(action, params=None, headers=None):
             "email": email
         }
     elif action == "send_event":
-        chat_id = params.get("chat_id")
-        event = params.get("event")
-        if not chat_id or not event:
-            raise ValueError("Missing parameters for send_event action")
-        payload = {
-            "chat_id": chat_id,
-            "event": event
-        }
+        email = params.get("email")
+        has_payed = redis_cache.get(f"chat_expiration:{email}")
+        if has_payed:
+            chat_id = params.get("chat_id")
+            event = params.get("event")
+            if not chat_id or not event:
+                raise ValueError("Missing parameters for send_event action")
+            payload = {
+                "chat_id": chat_id,
+                "event": event
+            }
+        else:
+            raise Exception(f"The user hasn't payed")
     else:
         raise Exception(f"Unsupported action: {action}")
     
