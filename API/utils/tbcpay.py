@@ -16,14 +16,18 @@ def call_tbcpay_api(action, params):
     if not endpoint:
         raise Exception(f"Endpoint {action} not found")
 
-    token = params.get("token")
     headers = {
         'apikey': TBCPAY_API_KEY,
         'Content-Type': 'application/json'
     }
     payload = {}
-        
+
     try:
+        if action != "get_token":
+            token_response = call_tbcpay_api("get_token", params={})
+            token = token_response.get('access_token')
+            headers['Authorization'] = f"Bearer {token}"
+
         if action == "get_token":
             payload = {
                 "client_Id": TBCPAY_CLIENT_ID,
@@ -35,14 +39,10 @@ def call_tbcpay_api(action, params):
             amount = params.get("amount")
             return_url = params.get("returnurl")
 
-            headers['Authorization'] = f"Bearer {token}"
             payload['amount'] = amount
             payload['returnurl'] = return_url
-            print(payload)
-            print(headers)
             response = requests.post(endpoint, headers=headers, json=payload)
         elif action == "complete_payment":
-            headers['Authorization'] = f"Bearer {token}"
             amount = params.get("amount")
             payment_id = params.get("payment_id")
 
