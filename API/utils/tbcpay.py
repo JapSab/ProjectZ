@@ -11,42 +11,68 @@ ENDPOINTS = {
     "complete_payment": f"{TBCPAY_BASE_URL}/{TBCPAY_API_VERSION}/tpay/payments/{payment_id}/completion",
 }
 
+PACKAGE_PRICES = {
+    1: {"currency": "GEL", "total": 10, "subTotal": 0, "tax": 0, "shipping": 0},
+    2: {"currency": "GEL", "total": 50, "subTotal": 0, "tax": 0, "shipping": 0},
+    3: {"currency": "GEL", "total": 80, "subTotal": 0, "tax": 0, "shipping": 0}
+}
+
 def call_tbcpay_api(action, params):
     endpoint = ENDPOINTS.get(action)
     if not endpoint:
         raise Exception(f"Endpoint {action} not found")
 
-    token = params.get("token")
     headers = {
         'apikey': TBCPAY_API_KEY,
         'Content-Type': 'application/json'
     }
     payload = {}
-        
+
     try:
+        if action != "get_token":
+            token_response = call_tbcpay_api("get_token", params={})
+            token = token_response.get('access_token')
+            headers['Authorization'] = f"Bearer {token}"
+
         if action == "get_token":
+            
             payload = {
                 "client_Id": TBCPAY_CLIENT_ID,
                 "client_secret": TBCPAY_CLIENT_SECRET,
             }
+
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
             response = requests.post(endpoint, headers=headers, data=payload)
         elif action == "create_payment":
-            amount = params.get("amount")
+            package_id = params.get("packageId")
             return_url = params.get("returnurl")
             email = params.get("email")
 
-            headers['Authorization'] = f"Bearer {token}"
+            if package_id not in PACKAGE_PRICES:
+                raise ValueError("Invalid package ID")
+
+            amount = PACKAGE_PRICES[package_id]
+
             payload['amount'] = amount
             payload['returnurl'] = return_url
 
             response = requests.post(endpoint, headers=headers, json=payload)
             if response.status_code == 200:
                 if email:
-                    redis_cache.set(f"chat_expiration:{email}", amount['total'], ex=1800)
+                    if package_id == 1:
+                        expiration_time = 1800  # 30 minutes
+                    elif package_id == 2:
+                        expiration_time = 5400  # 1 hour
+                    elif package_id == 3:
+                        expiration_time = 7200  # 2 hours
+                                
+                    redis_cache.set(f"chat_expiration:{email}", amount['total'], ex=expiration_time)
+
+
+
+                redis_cache.set(f"chat_expiration:{email}", amount['total'], ex=1800)
 
         elif action == "complete_payment":
-            headers['Authorization'] = f"Bearer {token}"
             amount = params.get("amount")
             payment_id = params.get("payment_id")
 
@@ -54,11 +80,14 @@ def call_tbcpay_api(action, params):
 
             if "payment_id" in endpoint:
                 endpoint = endpoint.replace('payment_id', payment_id)
-                
+
             response = requests.post(endpoint, headers=headers, json=payload)
-        
+
+       
         response.raise_for_status()
+
         return response.json()
+    
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
         if response is not None:

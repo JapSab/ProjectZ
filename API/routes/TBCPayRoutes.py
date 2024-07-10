@@ -12,6 +12,7 @@ def call_tbcpay():
         return jsonify({"error": "Missing action parameter"}), 400
     try:
         response = call_tbcpay_api(action, params=data)
+        print(response)
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
