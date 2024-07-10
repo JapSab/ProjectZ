@@ -11,10 +11,9 @@ def register_user():
     try:
         user_data = request.json
         email = user_data.get("email")
-
         result, status = registration_handler.register(user_data)
-        token = registration_handler.generate_verification_token(email)
-        verification_link = f"http://frontend.com/verify-email?token={token}"
+        email_token = registration_handler.generate_verification_token(email)
+        verification_link = f"http://frontend.com/verify-email?token={email_token}"
         # send_verification_email(email, verification_link)
 
         return jsonify(result), status
@@ -49,7 +48,6 @@ def login_user():
 
         login_handler = ClientLogin(users_collection)
         result, status = login_handler.login(email, password)
-        print(result)
         return jsonify(result), status
     except Exception as e:
         return jsonify({"error": str(e)}), 500

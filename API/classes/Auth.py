@@ -52,7 +52,8 @@ class ClientRegistration:
     def verify_email(email):
         mongo.db.users.update_one({'email': email}, {'$set': {'is_verified': True}})
 
-    def generate_verification_token(email, expiration=1800):
+    def generate_verification_token(self, email):
+        expiration=1800
         payload = {
             'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration)

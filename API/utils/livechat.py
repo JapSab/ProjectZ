@@ -49,7 +49,7 @@ def call_livechat_api(action, params=None, headers=None):
                 "event": event
             }
         else:
-            raise Exception(f"The user hasn't payed")
+            raise Exception("You have not purchased a package, or your payed time has run out, please purchase a package to continue")
     else:
         raise Exception(f"Unsupported action: {action}")
     
