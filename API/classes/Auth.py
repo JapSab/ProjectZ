@@ -1,6 +1,9 @@
-from API import redis_cache, users_collection, admin_collection,jwt_secret_key
+from API import redis_cache, users_collection, admin_collection, jwt_secret_key, redis_cache
 from API.utils.tokenizer import generate_jwt_token
+
+import jwt
 import bcrypt
+import datetime
 
 class ClientRegistration:
     def __init__(self, users_collection):
@@ -17,21 +20,18 @@ class ClientRegistration:
         email = user_data.get("email")
         password = user_data.get("password")
         phone = user_data.get("phone")
-        # validation
+        
         # if not name or not lastname or not email or not phone or not password:
         if not  email or not password or not phone:
-
             return {"error": "Missing name, lastname, email, or phone"}, 400
 
         # Check if user already exists
         if self.users_collection.find_one({"email": email}):
             return {"error": "User with this email already exists"}, 409
-        print("qwiue0q9wue0qiwue")
 
         # hashing the password
         hashed_password = self.hash_password(password)
         user_data['password'] = hashed_password
-        
 
         user_data = {
             # "name": name,
@@ -39,12 +39,37 @@ class ClientRegistration:
             "email": email,
             "password": hashed_password,
             "phone": phone,
-            "role": "user"  
+            "role": "user",
+            "is_verified": False
+
         }
 
         # Inserting user data into MongoDB
         self.users_collection.insert_one(user_data)
+
         return {"message": "User registered successfully"}, 201
+
+    def verify_email(email):
+        mongo.db.users.update_one({'email': email}, {'$set': {'is_verified': True}})
+
+    def generate_verification_token(email, expiration=1800):
+        payload = {
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration)
+        }
+        token = jwt.encode(payload, jwt_secret_key, algorithm='HS256')
+        redis_cache.set(f"verify:{email}", token, ex=expiration)
+
+        return token
+ 
+    def verify_token(token):
+        try:
+            payload = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
+            email = payload['email']
+            if redis_cache.get(f"verify:{email}") == token:
+                return email
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
     
 
 class ClientLogin:

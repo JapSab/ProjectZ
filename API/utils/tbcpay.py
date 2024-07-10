@@ -41,7 +41,6 @@ def call_tbcpay_api(action, params):
             payload['returnurl'] = return_url
 
             response = requests.post(endpoint, headers=headers, json=payload)
-            print(response)
             if response.status_code == 200:
                 if email:
                     redis_cache.set(f"chat_expiration:{email}", amount['total'], ex=1800)

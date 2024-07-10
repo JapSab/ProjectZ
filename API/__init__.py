@@ -36,6 +36,10 @@ TBCPAY_API_KEY = os.environ.get("TBCPAY_API_KEY")
 TBCPAY_CLIENT_ID = os.environ.get("TBCPAY_CLIENT_ID")
 TBCPAY_CLIENT_SECRET = os.environ.get("TBCPAY_CLIENT_SECRET")
 
+MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN', 'sandbox123.mailgun.org')
+MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY', 'YOUR_MAILGUN_API_KEY')
+MAILGUN_SENDER_EMAIL = os.getenv('MAILGUN_SENDER_EMAIL', 'no-reply@sandbox123.mailgun.org')
+
 def teardown_event(exception=None):
     if redis_cache.redis_cache is not None:
         redis_cache.redis_cache.close()
