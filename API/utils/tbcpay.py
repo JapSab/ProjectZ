@@ -45,7 +45,7 @@ def call_tbcpay_api(action, params):
             package_id = params.get("packageId")
             return_url = params.get("returnurl")
             email = params.get("email")
-
+            
             if package_id not in PACKAGE_PRICES:
                 raise ValueError("Invalid package ID")
 
@@ -66,7 +66,6 @@ def call_tbcpay_api(action, params):
 
                 response = requests.get(url, headers=headers)
                 response_data = response.json()
-
                 if response_data["status"] == "Succeeded":
                     etnry_exists = redis_cache.get(f"chat_expiration:{email}")
                     if etnry_exists == None:
@@ -86,6 +85,7 @@ def call_tbcpay_api(action, params):
                 if etnry_exists:
                     return {"Succeeded": True}
                 else:
+                    print('here')
                     return {"Succeeded": False, "message": "You have not purchased a package, or your payed time has run out, please purchase a package to continue"}
 
        
